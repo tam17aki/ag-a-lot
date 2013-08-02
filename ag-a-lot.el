@@ -43,7 +43,7 @@
 ;;
 ;; 2. Install ag.el (https://github.com/Wilfred/ag.el).
 ;;
-;; 3. Add the following to your ~/.emacs:
+;; 3 . Add the following to your ~/.emacs:
 ;;    (require 'ag-a-lot)
 ;;    (ag-a-lot-setup-keys)
 ;;
@@ -52,16 +52,16 @@
 ;; Default Key Bindings:
 ;;
 ;; Ring navigation:
-;; M-g ]         Go to next search results buffer, restore its current search context
-;; M-g [         Ditto, but selects previous buffer.
+;; M-g M-]       Go to next search results buffer, restore its current search context
+;; M-g M-[       Ditto, but selects previous buffer.
 ;;               Navigation is cyclic.
 ;;
 ;; Stack navigation:
-;; M-g -         Pop to previous search results buffer (kills top search results buffer)
-;; M-g _         Clear the search results stack (kills all ag-a-lot buffers!)
+;; M-g M--       Pop to previous search results buffer (kills top search results buffer)
+;; M-g M-_       Clear the search results stack (kills all ag-a-lot buffers!)
 ;;
 ;; Other:
-;; M-g =         Restore buffer and position where current search started
+;; M-g M-=       Restore buffer and position where current search started
 ;;
 
 ;;; Code:
@@ -279,14 +279,14 @@ so as to enable multiple search results buffers."
 (add-hook 'ag-mode-hook 'ag-a-lot-ag-setup-hook)
 (add-hook 'kill-buffer-hook 'ag-a-lot-kill-buffer-hook)
 
-(defun ag-a-lot-setup-keys()
+(defun ag-a-lot-setup-keys ()
   "Define some key bindings for navigating multiple
 ag search results buffers."
-  (define-key esc-map "g]" 'ag-a-lot-goto-next)
-  (define-key esc-map "g[" 'ag-a-lot-goto-prev)
-  (define-key esc-map "g-" 'ag-a-lot-pop-stack)
-  (define-key esc-map "g_" 'ag-a-lot-clear-stack)
-  (define-key esc-map "g=" 'ag-a-lot-restart-context))
+  (define-key esc-map (kbd "g M-]") 'ag-a-lot-goto-next)
+  (define-key esc-map (kbd "g M-[") 'ag-a-lot-goto-prev)
+  (define-key esc-map (kbd "g M--") 'ag-a-lot-pop-stack)
+  (define-key esc-map (kbd "g M-_") 'ag-a-lot-clear-stack)
+  (define-key esc-map (kbd "g M-=") 'ag-a-lot-restart-context))
 
 (provide 'ag-a-lot)
 
