@@ -66,7 +66,6 @@
 
 ;;; Code:
 
-(require 'advice)
 (require 'ag)
 
 (defconst ag-a-lot-buffer-name-regexp "^\\*ag\\*<\\([0-9]+\\)>$"
