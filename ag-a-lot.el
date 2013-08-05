@@ -5,8 +5,10 @@
 
 ;; Author: Avi Rozen <avi.rozen@gmail.com>
 ;;         Akira Tamamori <tamamori5917@gmail.com>
+;; URL: https://https://github.com/tam17aki/ag-a-lot.el
 ;; Keywords: tools, convenience, search
 ;; Version: 1.0
+;; Package-Requires ((ag "20130722.1547"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -28,7 +30,7 @@
 ;;; Commentary:
 
 ;; This package manages multiple search results buffers:
-;; - the search results of ag are sent
+;; - the search results of `ag' are sent
 ;;   to separate buffers instead of overwriting the contents of a single
 ;;   buffer (buffers are named *ag*<N> where N is a number)
 ;; - several navigation functions are provided to allow the user to treat
@@ -211,6 +213,11 @@ Return -1 if NAME is does not match `ag-a-lot-buffer-name-regexp'."
           (set (make-local-variable 'ag-a-lot-context) context)
           (ag-a-lot-set-current-buffer))))))
 
+;; register hooks
+(add-hook 'next-error-hook 'ag-a-lot-next-error-hook)
+(add-hook 'ag-mode-hook 'ag-a-lot-ag-setup-hook)
+(add-hook 'kill-buffer-hook 'ag-a-lot-kill-buffer-hook)
+
 (defun ag-a-lot-restore-context (ag-buffer &optional initial)
   "Restore AG-BUFFER context.
 If INITIAL is non nil then use initial context."
@@ -232,6 +239,7 @@ If INITIAL is non nil then use initial context."
           (pop-to-buffer buffer)
           (goto-char pos))))))
 
+;;;###autoload
 (defun ag-a-lot-restart-context (&optional ag-buffer)
   "Restart buffer and position for the current search results buffer AG-BUFFER.
 If AG-BUFFER is nil then restart context of current search results buffer."
@@ -240,16 +248,19 @@ If AG-BUFFER is nil then restart context of current search results buffer."
                          (ag-a-lot-get-current-buffer))))
     (ag-a-lot-restore-context ag-buffer t)))
 
+;;;###autoload
 (defun ag-a-lot-goto-next ()
   "Goto next search results buffer."
   (interactive)
   (ag-a-lot-restore-context (ag-a-lot-next-buffer)))
 
+;;;###autoload
 (defun ag-a-lot-goto-prev ()
   "Goto previous search results buffer."
   (interactive)
   (ag-a-lot-restore-context (ag-a-lot-prev-buffer)))
 
+;;;###autoload
 (defun ag-a-lot-pop-stack ()
   "Switch to previous search results buffer, and kill current buffer."
   (interactive)
@@ -259,10 +270,21 @@ If AG-BUFFER is nil then restart context of current search results buffer."
       (ag-a-lot-goto-prev)
       (kill-buffer buffer))))
 
+;;;###autoload
 (defun ag-a-lot-clear-stack ()
   "Kill all ag search results buffers."
   (interactive)
   (mapcar 'kill-buffer (ag-a-lot-buffers)))
+
+;;;###autoload
+(defun ag-a-lot-setup-keys ()
+  "Define some key bindings for navigating multiple
+ag search results buffers."
+  (define-key esc-map (kbd "g M-]") 'ag-a-lot-goto-next)
+  (define-key esc-map (kbd "g M-[") 'ag-a-lot-goto-prev)
+  (define-key esc-map (kbd "g M--") 'ag-a-lot-pop-stack)
+  (define-key esc-map (kbd "g M-_") 'ag-a-lot-clear-stack)
+  (define-key esc-map (kbd "g M-=") 'ag-a-lot-restart-context))
 
 (defmacro ag-a-lot-advise (func)
   "Advise a ag-like function FUNC with an around-type advice,
@@ -276,20 +298,6 @@ so as to enable multiple search results buffers."
          ad-return-value))))
 
 (ag-a-lot-advise ag)
-
-;; register hooks
-(add-hook 'next-error-hook 'ag-a-lot-next-error-hook)
-(add-hook 'ag-mode-hook 'ag-a-lot-ag-setup-hook)
-(add-hook 'kill-buffer-hook 'ag-a-lot-kill-buffer-hook)
-
-(defun ag-a-lot-setup-keys ()
-  "Define some key bindings for navigating multiple
-ag search results buffers."
-  (define-key esc-map (kbd "g M-]") 'ag-a-lot-goto-next)
-  (define-key esc-map (kbd "g M-[") 'ag-a-lot-goto-prev)
-  (define-key esc-map (kbd "g M--") 'ag-a-lot-pop-stack)
-  (define-key esc-map (kbd "g M-_") 'ag-a-lot-clear-stack)
-  (define-key esc-map (kbd "g M-=") 'ag-a-lot-restart-context))
 
 (provide 'ag-a-lot)
 
