@@ -8,7 +8,7 @@
 ;; URL: https://https://github.com/tam17aki/ag-a-lot.el
 ;; Keywords: tools, convenience, search
 ;; Version: 1.0
-;; Package-Requires ((ag "20130722.1547"))
+;; Package-Requires ((ag "0.23"))
 
 ;; This file is NOT part of GNU Emacs.
 
